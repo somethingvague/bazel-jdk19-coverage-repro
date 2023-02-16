@@ -1,0 +1,11 @@
+build --announce_rc
+
+build --java_language_version=19
+build --java_runtime_version=local_jdk_19
+build --tool_java_language_version=19
+build --tool_java_runtime_version=19
+
+build --java_header_compilation=false
+
+test --jvmopt=-Djava.security.manager=allow
+coverage --jvmopt=-Djava.security.manager=allow

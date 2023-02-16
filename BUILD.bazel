@@ -1,0 +1,44 @@
+load("@rules_java//java:defs.bzl", "java_binary", "java_library", "java_test")
+
+package(default_visibility = ["//visibility:public"])
+
+load("@bazel_tools//tools/jdk:remote_java_repository.bzl", "remote_java_repository")
+load("@bazel_tools//tools/jdk:default_java_toolchain.bzl",
+"BASE_JDK9_JVM_OPTS",
+"DEFAULT_JAVACOPTS",
+"DEFAULT_TOOLCHAIN_CONFIGURATION",
+"default_java_toolchain")
+
+
+default_java_toolchain(
+    name = "my_jdk",
+    java_runtime = "@jdk-build-archive//:runtime",
+    jvm_opts = BASE_JDK9_JVM_OPTS,
+    misc = DEFAULT_JAVACOPTS,
+    source_version = "19",
+    target_version = "19",
+    visibility = ["//visibility:public"],
+)
+
+java_library(
+    name = "java-maven-lib",
+    srcs = glob(["src/main/java/repro/*.java"]),
+    deps = ["@maven//:com_google_guava_guava"],
+)
+
+java_binary(
+    name = "java-maven",
+    main_class = "repro.App",
+    runtime_deps = [":java-maven-lib"],
+)
+
+java_test(
+    name = "tests",
+    srcs = glob(["src/test/java/repro/*.java"]),
+    test_class = "repro.TestApp",
+    deps = [
+        ":java-maven-lib",
+        "@maven//:com_google_guava_guava",
+        "@maven//:junit_junit",
+    ],
+)
